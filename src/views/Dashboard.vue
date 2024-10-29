@@ -29,7 +29,7 @@
                     <h1 class="text-2xl">{{ postLists.length }}</h1>
                     <div class="flex items-center text-orange-500">
                         <Icon icon="iconamoon:trend-up" class="text-xs" />
-                        <p class="text-xs">+{{ calculateAddedStudentsList() }}% last month</p>
+                        <p class="text-xs">+{{ calculateAddedPostsList() }}% last month</p>
                     </div>
                 </div>
             </div>
@@ -39,13 +39,13 @@
                 </div>
                 <div class="h-full w-full flex flex-col justify-between">
                     <div class="flex w-full items-center justify-between">
-                        <h1 class="text-sm font-medium">Total students</h1>
+                        <h1 class="text-sm font-medium">Total Reports</h1>
                         <p class="text-xs text-gray-500">{{ formattedDateNow() }}</p>
                     </div>
-                    <h1 class="text-2xl">{{ studentsList.length }}</h1>
+                    <h1 class="text-2xl">{{ reportsLists.length }}</h1>
                     <div class="flex items-center text-orange-500">
                         <Icon icon="iconamoon:trend-up" class="text-xs" />
-                        <p class="text-xs">+{{ calculateAddedStudentsList() }}% last month</p>
+                        <p class="text-xs">+{{ calculateAddedReportsList() }}% last month</p>
                     </div>
                 </div>
             </div>
@@ -62,6 +62,7 @@ const dataStore = useDataStore()
 
 const studentsList = computed(() => dataStore.studentLists)
 const postLists = computed(() => dataStore.postLists)
+const reportsLists = computed(() => dataStore.reportsLists)
 
 const calculateAddedStudentsList = () => {
     const todaysDate = new Date();
@@ -80,6 +81,40 @@ const calculateAddedStudentsList = () => {
     return newStudentPercentage;
 }
 
+const calculateAddedPostsList = () => {
+    const todaysDate = new Date();
+    const currentMonth = todaysDate.getMonth();
+    const currentYear = todaysDate.getFullYear();
+
+    const totalposts = postLists.value.length;
+
+    const postsAddedThisMonth = postLists.value.filter(post => {
+        const postedAt = post.postedAt.toDate(); 
+        return postedAt.getMonth() === currentMonth && postedAt.getFullYear() === currentYear;
+    }).length;
+
+    const newPostsPercentage = (postsAddedThisMonth / totalposts) * 100;
+
+    return newPostsPercentage;
+}
+
+const calculateAddedReportsList = () => {
+    const todaysDate = new Date();
+    const currentMonth = todaysDate.getMonth();
+    const currentYear = todaysDate.getFullYear();
+
+    const totalReports = reportsLists.value.length;
+
+    const reportsAddedThisMonth = reportsLists.value.filter(post => {
+        const reportedAt = post.reportedAt.toDate(); 
+        return reportedAt.getMonth() === currentMonth && reportedAt.getFullYear() === currentYear;
+    }).length;
+
+    const newReportsPercentage = (reportsAddedThisMonth / totalReports) * 100;
+
+    return newReportsPercentage;
+}
+
 
 
 const formattedDateNow = () => {
@@ -89,5 +124,7 @@ const formattedDateNow = () => {
 
 onMounted(() => {
     dataStore.getStudents()
+    dataStore.getPosts()
+    dataStore.getReports()
 })
 </script>

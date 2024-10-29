@@ -3,7 +3,11 @@
         <div class="w-full flex justify-end">
             <button class="bg-blue-500 text-white rounded py-1 px-5 hover:bg-blue-600" @click="addModal = true">Add User</button>
         </div>
-        <div class="bg-gray-100/45 p-2 rounded">
+        <div class="bg-gray-100/45 p-2 rounded space-y-5">
+            <div class="flex items-center gap-x-3">
+                <Icon icon="mdi:user" class="text-3xl text-gray-500" />
+                <h1 class="text-lg font-medium">Students Lists</h1>
+            </div>
             <table class="border w-full">
                 <thead>
                     <tr class="font-medium">
