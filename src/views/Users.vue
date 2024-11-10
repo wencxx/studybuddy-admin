@@ -31,6 +31,7 @@
                         <td class="border text-center py-1">
                             <div class="flex justify-center gap-x-2 text-lg">
                                 <Icon icon="mdi:pencil" class="text-green-500" />
+                                <Icon icon="mdi:trash" class="text-red-500" @click="deleteStudent(student.userId, index)" />
                             </div>
                         </td>
                     </tr>
@@ -55,10 +56,17 @@
 <script setup>
 import AddUser from "../components/AddUserModal.vue";
 import { db } from '../config/firebaseConfig'
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, getDocs, query, where, arrayRemove, deleteDoc, updateDoc, or } from 'firebase/firestore'
 import { computed, onMounted, ref } from 'vue'
 import moment from 'moment'
 import { useDataStore } from '../store'
+import axios from 'axios'
+import { useToast } from 'vue-toast-notification'
+import 'vue-toast-notification/dist/theme-sugar.css'
+
+const $toast = useToast()
+
+// https://nopsscea-server.vercel.app/
 
 const dataStore = useDataStore()
 
@@ -82,6 +90,81 @@ onMounted(async() => {
 const addedNewUser = (data) => {
     studentLists.value.unshift(data)
 }
+
+// delete user and related data
+const commentsRef = collection(db, 'comments')
+// userId
+const marketplaceRef = collection(db, 'marketplace')
+// userId
+const messagesRef = collection(db, 'messages')
+// sendBy, receiveBY
+const answeredQuizRef = collection(db, 'answeredQuiz')
+const notesRef = collection(db, 'notes')
+// userId, sharedTo,
+const notificationsRef = collection(db, 'notifications')
+// to, from
+const postsRef = collection(db, 'posts')
+// userId
+const quizzesRef = collection(db, 'quizzes')
+// userId, sharedTo,
+const usersRef = collection(db, 'users')
+// userId
+
+const deleteStudent = async (studentId, index) => {
+    try {
+        const res = await axios.delete(`https://studybuddy-server-navy.vercel.app/delete-user/${studentId}`);
+
+        console.log(res.data)
+
+        if (res.data === 'successfully deleted') {
+            studentLists.value.splice(index, 1)
+            $toast.success('Delete student successfully')
+            $toast
+
+            const commentsSnap = await getDocs(query(commentsRef, where('userId', '==', studentId)));
+            commentsSnap.forEach(async (doc) => await deleteDoc(doc.ref));
+
+            const marketplaceSnap = await getDocs(query(marketplaceRef, where('userId', '==', studentId)));
+            marketplaceSnap.forEach(async (doc) => await deleteDoc(doc.ref));
+
+            const messagesSnap = await getDocs(query(messagesRef, or(where('sendBy', '==', studentId), where('receiveBy', '==', studentId))));
+            messagesSnap.forEach(async (doc) => await deleteDoc(doc.ref));
+            
+            const answeredQuizSnap = await getDocs(query(answeredQuizRef, where('userId', '==', studentId)));
+            answeredQuizSnap.forEach(async (doc) => await deleteDoc(doc.ref));
+
+            const notesSnap = await getDocs(query(notesRef, where('userId', '==', studentId)));
+            notesSnap.forEach(async (doc) => await deleteDoc(doc.ref));
+
+            const sharedNotesSnap = await getDocs(query(notesRef, where('sharedTo', 'array-contains', studentId)));
+            sharedNotesSnap.forEach(async (doc) => await updateDoc(doc.ref, {
+                sharedTo: arrayRemove(studentId)
+            }));
+
+            const notificationsSnapTo = await getDocs(query(notificationsRef, or(where('to', '==', studentId), where('from', '==', studentId) )));
+            notificationsSnapTo.forEach(async (doc) => await deleteDoc(doc.ref));
+
+            const postsSnap = await getDocs(query(postsRef, where('userId', '==', studentId)));
+            postsSnap.forEach(async (doc) => await deleteDoc(doc.ref));
+
+            const quizzesSnap = await getDocs(query(quizzesRef, where('userId', '==', studentId)));
+            quizzesSnap.forEach(async (doc) => await deleteDoc(doc.ref));
+
+            const usersSnap = await getDocs(query(usersRef, where('userId', '==', studentId)));
+            usersSnap.forEach(async (doc) => await deleteDoc(doc.ref));
+
+            const sharedQuizzesSnap = await getDocs(query(quizzesRef, where('sharedTo', 'array-contains', studentId)));
+            sharedQuizzesSnap.forEach(async (doc) => await updateDoc(doc.ref, {
+                sharedTo: arrayRemove(studentId)
+            }));
+
+            console.log('All related data deleted successfully.');
+        }
+    } catch (error) {
+        console.error('Error deleting student and related data:', error);
+        $toast.error('Failed to delete student')
+    }
+};
 
 const addModal = ref(false)
 </script>

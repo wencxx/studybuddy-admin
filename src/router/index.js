@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router"
 import { useAuthStore } from '../store'
+import dashboard from '../views/Dashboard.vue'
 
 const routes = [
     {
@@ -10,7 +11,7 @@ const routes = [
     {
         path: '/dashboard',
         name: 'dashboard',
-        component: () => import('../views/Dashboard.vue'),
+        component: dashboard,
         meta: {
             requiresAuth: true
         }
