@@ -13,7 +13,7 @@
                     <h1 class="text-2xl">{{ studentsList.length }}</h1>
                     <div class="flex items-center text-orange-500">
                         <Icon icon="iconamoon:trend-up" class="text-xs" />
-                        <p class="text-xs">+{{ calculateAddedStudentsList() }}% last month</p>
+                        <p class="text-xs">+{{ calculateAddedStudentsList() || 0 }}% last month</p>
                     </div>
                 </div>
             </div>
@@ -29,7 +29,7 @@
                     <h1 class="text-2xl">{{ postLists.length }}</h1>
                     <div class="flex items-center text-orange-500">
                         <Icon icon="iconamoon:trend-up" class="text-xs" />
-                        <p class="text-xs">+{{ calculateAddedPostsList() }}% last month</p>
+                        <p class="text-xs">+{{ calculateAddedPostsList() || 0 }}% last month</p>
                     </div>
                 </div>
             </div>
@@ -45,9 +45,17 @@
                     <h1 class="text-2xl">{{ reportsLists.length }}</h1>
                     <div class="flex items-center text-orange-500">
                         <Icon icon="iconamoon:trend-up" class="text-xs" />
-                        <p class="text-xs">+{{ calculateAddedReportsList() }}% last month</p>
+                        <p class="text-xs">+{{ calculateAddedReportsList() || 0 }}% last month</p>
                     </div>
                 </div>
+            </div>
+            <div class="bg-gray-100 w-full h-[40dvh] col-span-3 rounded-xl">
+                <Bar
+                    id="my-chart-id"
+                    :options="chartOptions"
+                    :data="chartData"
+                    class="!h-full !w-full"
+                />
             </div>
         </div>
     </div>
@@ -55,8 +63,14 @@
 
 <script setup>
 import moment from 'moment'
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useDataStore } from '../store'
+import { Bar } from 'vue-chartjs'
+import { db } from '../config/firebaseConfig'
+import { collection, getDocs } from 'firebase/firestore'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 const dataStore = useDataStore()
 
@@ -122,9 +136,80 @@ const formattedDateNow = () => {
     return moment(today).format('LL')
 }
 
-onMounted(() => {
+// Chart data setup
+const chartData = ref({
+    labels: ['Question 1', 'Question 2', 'Question 3', 'Question 4', 'Question 5'],
+    datasets: [
+        {
+            label: 'Average Ratings',
+            data: [],
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        }
+    ]
+});
+
+const chartOptions = {
+    responsive: true,
+    plugins: {
+        legend: {
+            position: 'top',
+        },
+        tooltip: {
+            callbacks: {
+                label: (context) => `Average: ${context.raw.toFixed(2)}`
+            }
+        }
+    },
+    devicePixelRatio: 4
+};
+
+// Fetch data from Firestore
+const fetchRatingsData = async () => {
+    const ratingsCollection = collection(db, 'ratings');
+    const ratingsSnapshot = await getDocs(ratingsCollection);
+
+    const ratingsData = {
+        q1: [],
+        q2: [],
+        q3: [],
+        q4: [],
+        q5: []
+    };
+
+    ratingsSnapshot.forEach(doc => {
+        const data = doc.data();
+        ratingsData.q1.push(data.q1 || 0);
+        ratingsData.q2.push(data.q2 || 0);
+        ratingsData.q3.push(data.q3 || 0);
+        ratingsData.q4.push(data.q4 || 0);
+        ratingsData.q5.push(data.q5 || 0);
+    });
+
+    const calculateAverage = (arr) => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+
+    // Update the data in a way that ensures reactivity
+    chartData.value = {
+        ...chartData.value,
+        datasets: [
+            {
+                ...chartData.value.datasets[0],
+                data: [
+                    calculateAverage(ratingsData.q1),
+                    calculateAverage(ratingsData.q2),
+                    calculateAverage(ratingsData.q3),
+                    calculateAverage(ratingsData.q4),
+                    calculateAverage(ratingsData.q5)
+                ]
+            }
+        ]
+    };
+};
+
+
+onMounted(async () => {
     dataStore.getStudents()
     dataStore.getPosts()
     dataStore.getReports()
+    await fetchRatingsData()
 })
 </script>

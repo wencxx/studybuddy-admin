@@ -38,7 +38,7 @@
                 </tbody>
                 <tbody v-if="!loading && !reportedPost?.length">
                     <tr>
-                        <td class="border text-center py-1" colspan="7">No students to show</td>
+                        <td class="border text-center py-1" colspan="7">No reports to show</td>
                     </tr>
                 </tbody>
                 <tbody v-if="loading">
