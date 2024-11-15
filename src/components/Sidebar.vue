@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col gap-y-10 p-5">
-        <h1 class="text-lg text-center font-semibold uppercase flex justify-center">StuddyBuddy|<p class="text-blue-500">Admin</p></h1>
+        <h1 class="text-lg text-center font-semibold uppercase flex justify-center">StudyBuddy|<p class="text-blue-500">Admin</p></h1>
         <nav>
             <ul class="flex flex-col gap-y-1">
                 <li class="flex items-center gap-x-2 px-2 py-1 rounded" :class="{ 'bg-gray-200': $route.name === 'dashboard' }">
