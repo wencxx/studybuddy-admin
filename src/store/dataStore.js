@@ -7,6 +7,7 @@ const useDataStore = defineStore('dataStore', {
         studentLists: [],
         postLists: [],
         reportsLists: [],
+        feedbackLists: [],
     }),
     actions: {
         async getStudents() {
@@ -59,6 +60,24 @@ const useDataStore = defineStore('dataStore', {
                     })
                 });
                 console.log('Fetched reports successfully')
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        async getFeedbacks() {
+            this.feedbackLists = []
+            const feedbacksRef = collection(db, 'feedback')
+
+            try {
+                const snapshots = await getDocs(feedbacksRef)
+        
+                snapshots.docs.forEach(doc => {
+                    this.feedbackLists.push({
+                        id: doc.id,
+                        ...doc.data()
+                    })
+                });
+                console.log('Fetched feedback successfully')
             } catch (error) {
                 console.log(error)
             }

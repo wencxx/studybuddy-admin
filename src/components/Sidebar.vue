@@ -11,6 +11,10 @@
                     <Icon icon="mdi:user" class="text-xl" />
                     <router-link :to="{ name: 'users' }" class="font-semibold text-lg">Users</router-link>
                 </li>
+                <li class="flex items-center gap-x-2 px-2 py-1 rounded" :class="{ 'bg-gray-200': $route.name === 'feedbacks' }">
+                    <Icon icon="mdi:feedback" class="text-xl" />
+                    <router-link :to="{ name: 'feedbacks' }" class="font-semibold text-lg">Feedbacks</router-link>
+                </li>
                 <li class="flex items-center gap-x-2 px-2 py-1 rounded" :class="{ 'bg-gray-200': $route.name === 'reports' }">
                     <Icon icon="ic:round-report" class="text-xl" />
                     <router-link :to="{ name: 'reports' }" class="font-semibold text-lg">Reports</router-link>
