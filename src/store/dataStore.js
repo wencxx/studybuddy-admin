@@ -23,7 +23,6 @@ const useDataStore = defineStore('dataStore', {
                         ...doc.data()
                     })
                 });
-                console.log('Fetched students successfully')
             } catch (error) {
                 console.log(error)
             }
@@ -41,7 +40,6 @@ const useDataStore = defineStore('dataStore', {
                         ...doc.data()
                     })
                 });
-                console.log('Fetched posts successfully')
             } catch (error) {
                 console.log(error)
             }
@@ -59,7 +57,6 @@ const useDataStore = defineStore('dataStore', {
                         ...doc.data()
                     })
                 });
-                console.log('Fetched reports successfully')
             } catch (error) {
                 console.log(error)
             }
@@ -77,7 +74,6 @@ const useDataStore = defineStore('dataStore', {
                         ...doc.data()
                     })
                 });
-                console.log('Fetched feedback successfully')
             } catch (error) {
                 console.log(error)
             }
