@@ -138,7 +138,7 @@ const formattedDateNow = () => {
 
 // Chart data setup
 const chartData = ref({
-    labels: ['Question 1', 'Question 2', 'Question 3', 'Question 4', 'Question 5'],
+    labels: ['Question 1', 'Question 2', 'Question 3', 'Question 4', 'Question 5', 'Question 6', 'Question 7', 'Question 8'],
     datasets: [
         {
             label: 'Average Ratings',
@@ -173,7 +173,10 @@ const fetchRatingsData = async () => {
         q2: [],
         q3: [],
         q4: [],
-        q5: []
+        q5: [],
+        q6: [],
+        q7: [],
+        q8: [],
     };
 
     ratingsSnapshot.forEach(doc => {
@@ -183,6 +186,9 @@ const fetchRatingsData = async () => {
         ratingsData.q3.push(data.q3 || 0);
         ratingsData.q4.push(data.q4 || 0);
         ratingsData.q5.push(data.q5 || 0);
+        ratingsData.q6.push(data.q6 || 0);
+        ratingsData.q7.push(data.q7 || 0);
+        ratingsData.q8.push(data.q8 || 0);
     });
 
     const calculateAverage = (arr) => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
@@ -198,7 +204,10 @@ const fetchRatingsData = async () => {
                     calculateAverage(ratingsData.q2),
                     calculateAverage(ratingsData.q3),
                     calculateAverage(ratingsData.q4),
-                    calculateAverage(ratingsData.q5)
+                    calculateAverage(ratingsData.q5),
+                    calculateAverage(ratingsData.q6),
+                    calculateAverage(ratingsData.q7),
+                    calculateAverage(ratingsData.q8),
                 ]
             }
         ]
