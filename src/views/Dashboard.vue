@@ -49,6 +49,35 @@
                     </div>
                 </div>
             </div>
+            <div class="bg-gray-100/45 p-2 rounded space-y-5 col-span-3">
+                <div class="flex items-center gap-x-3">
+                    <Icon icon="mdi:user" class="text-3xl text-gray-500" />
+                    <h1 class="text-lg font-medium">Top Collaborators</h1>
+                </div>
+                <table class="border w-full">
+                    <thead>
+                        <tr class="font-medium">
+                            <td class="w-[14.2%] border text-center py-1">Ranking</td>
+                            <td class="w-[14.2%] border text-center py-1">Student Number</td>
+                            <td class="w-[14.2%] border text-center py-1">Name</td>
+                            <td class="w-[14.2%] border text-center py-1">Number of Collabs</td>
+                        </tr>
+                    </thead>
+                    <tbody v-if="studentsList?.length">
+                        <tr v-for="(student, index) in sortedStudentsLists" :key="index">
+                            <td class="border text-center py-1">{{ index + 1 }}</td>
+                            <td class="border text-center py-1">{{ student.studentNumber }}</td>
+                            <td class="border text-center py-1">{{ student.displayName }}</td>
+                            <td class="border text-center py-1">{{ student.collabs.length }}</td>
+                        </tr>
+                    </tbody>
+                    <tbody v-if="!studentsList.length">
+                        <tr>
+                            <td class="border text-center py-1" colspan="7">No students to show</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <div class="bg-gray-100 w-full h-[40dvh] col-span-3 rounded-xl">
                 <Bar
                     id="my-chart-id"
@@ -77,6 +106,13 @@ const dataStore = useDataStore()
 const studentsList = computed(() => dataStore.studentLists)
 const postLists = computed(() => dataStore.postLists)
 const reportsLists = computed(() => dataStore.reportsLists)
+
+const sortedStudentsLists = computed(() => {
+  return [...studentsList.value].sort((a, b) => b.collabs.length - a.collabs.length).splice(0, 5)
+});
+
+
+
 
 const calculateAddedStudentsList = () => {
     const todaysDate = new Date();
@@ -128,8 +164,6 @@ const calculateAddedReportsList = () => {
 
     return newReportsPercentage;
 }
-
-
 
 const formattedDateNow = () => {
     const today = new Date()
@@ -214,6 +248,9 @@ const fetchRatingsData = async () => {
     };
 };
 
+const formatBirthdate = (date) => {
+    return moment(date).format('ll')
+}
 
 onMounted(async () => {
     dataStore.getStudents()

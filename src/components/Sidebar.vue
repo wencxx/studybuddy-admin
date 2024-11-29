@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col gap-y-10 p-5">
-        <h1 class="text-lg text-center font-semibold uppercase flex justify-center">StuddyBuddy|<p class="text-blue-500">Admin</p></h1>
+        <h1 class="text-lg text-center font-semibold uppercase flex justify-center">StudyBuddy|<p class="text-blue-500">Admin</p></h1>
         <nav>
             <ul class="flex flex-col gap-y-1">
                 <li class="flex items-center gap-x-2 px-2 py-1 rounded" :class="{ 'bg-gray-200': $route.name === 'dashboard' }">
@@ -10,6 +10,10 @@
                 <li class="flex items-center gap-x-2 px-2 py-1 rounded" :class="{ 'bg-gray-200': $route.name === 'users' }">
                     <Icon icon="mdi:user" class="text-xl" />
                     <router-link :to="{ name: 'users' }" class="font-semibold text-lg">Users</router-link>
+                </li>
+                <li class="flex items-center gap-x-2 px-2 py-1 rounded" :class="{ 'bg-gray-200': $route.name === 'feedbacks' }">
+                    <Icon icon="mdi:feedback" class="text-xl" />
+                    <router-link :to="{ name: 'feedbacks' }" class="font-semibold text-lg">Feedbacks</router-link>
                 </li>
                 <li class="flex items-center gap-x-2 px-2 py-1 rounded" :class="{ 'bg-gray-200': $route.name === 'reports' }">
                     <Icon icon="ic:round-report" class="text-xl" />
