@@ -18,13 +18,11 @@
                 <label>Course</label>
                 <select class="border rounded h-7 pl-2" v-model="userData.course">
                     <option value="" disabled>Select course</option>
-                    <optgroup label="College of Computer Studies" class="text-sm">
-                        <option>BSIT</option>
-                        <option>BSIS</option>
-                    </optgroup>
-                    <optgroup label="College of Engineering" class="text-sm">
-                        <option>BScPE</option>
-                    </optgroup>
+                    <option>Bachelor of Science in Information Technology</option>
+                    <option>Bachelor of Science in Information Systems</option>
+                    <option>Bachelor of Science in Industrial Technology</option>
+                    <option>Bachelor of Science in Computer Engineering</option>
+                    <option>Bachelor of Technical Teacher Education</option>
                 </select>
             </div>
             <div class="flex flex-col gap-y-1">
